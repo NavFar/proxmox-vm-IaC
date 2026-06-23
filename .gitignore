@@ -1,0 +1,59 @@
+# Terraform working dirs
+**/.terraform/*
+.terraform/
+
+# Terraform state files - never commit local state
+*.tfstate
+*.tfstate.*
+
+# Terraform crash/debug logs
+crash.log
+crash.*.log
+
+# Terraform variable files that may contain secrets
+*.tfvars
+*.tfvars.json
+*.auto.tfvars
+*.auto.tfvars.json
+
+# But allow committed example variable files
+!*.tfvars.example
+!*.auto.tfvars.example
+
+# Terraform override files - usually local-only
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Terraform plan files
+*.tfplan
+plan.out
+tfplan
+
+# Terraform lock file
+# For real projects, COMMIT this file.
+# For early lab experiments, ignoring is acceptable.
+# Remove this line once provider versions stabilize.
+.terraform.lock.hcl
+
+# Terragrunt - currently unused, but harmless
+.terragrunt-cache/
+terragrunt-debug.tfvars.json
+
+# Local secret/env files
+.env
+.env.*
+!.env.example
+.envrc
+
+# Editor/OS junk
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.idea/
+.vscode/
+
+# Logs
+*.log
