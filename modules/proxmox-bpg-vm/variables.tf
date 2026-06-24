@@ -17,7 +17,7 @@ variable "vms" {
         vlan   = optional(number)
         ipv4 = object({
           address = string
-          gateway = string
+          gateway = optional(string)
 
         })
       })
@@ -36,9 +36,10 @@ variable "vms" {
   validation {
     condition = alltrue([
       for name, vm in var.vms :
-      contains(["tiny", "small", "medium", "large"], vm.size)
+      contains(keys(var.size_profiles), vm.size)
     ])
-    error_message = "VM size must be one of: tiny, small, medium, large."
+
+    error_message = "VM size must exist in size_profiles."
   }
 
   validation {
