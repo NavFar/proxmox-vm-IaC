@@ -128,11 +128,11 @@ resource "proxmox_harule" "node_affinity" {
 
 resource "proxmox_harule" "resource_affinity" {
   for_each = local.enabled_ha_resource_rules
-  rule   = "tf-${each.key}"
-  type    = each.value.type=="resource-affinity"
-  affinity = each.value.type =="resource-affinity"? "positive":"negative"
-  strict  = try(each.value.strict, false)
-  comment = try(each.value.comment, "Resource affinity rule ${each.key}; managed by Terraform")
+  rule     = "tf-${each.key}"
+  type     = each.value.type == "resource-affinity"
+  affinity = each.value.type == "resource-affinity" ? "positive" : "negative"
+  strict   = try(each.value.strict, false)
+  comment  = try(each.value.comment, "Resource affinity rule ${each.key}; managed by Terraform")
 
   resources = [
     for vm_name in each.value.resources :
@@ -162,12 +162,12 @@ resource "proxmox_harule" "resource_affinity" {
       error_message = "HA resource rule ${each.key} references a VM that is not HA-enabled. Enable placement.ha.enabled for every VM in the rule."
     }
     precondition {
-  condition = alltrue([
-    for vm_name in each.value.resources :
-    length(local.normalized_vms[vm_name].ha.node_affinity.nodes) <= 1
-  ])
+      condition = alltrue([
+        for vm_name in each.value.resources :
+        length(local.normalized_vms[vm_name].ha.node_affinity.nodes) <= 1
+      ])
 
-  error_message = "HA resource-affinity rules cannot be combined with multi-node priority node-affinity. Use at most one node in placement.ha.node_affinity.nodes for every VM in this resource rule."
-}
+      error_message = "HA resource-affinity rules cannot be combined with multi-node priority node-affinity. Use at most one node in placement.ha.node_affinity.nodes for every VM in this resource rule."
+    }
   }
 }

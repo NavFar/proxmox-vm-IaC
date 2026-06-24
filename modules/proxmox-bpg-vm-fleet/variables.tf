@@ -120,7 +120,7 @@ variable "default_node" {
   type        = string
   description = "Fallback Proxmox node when placement policy does not specify a node."
   validation {
-    condition = contains(local.cluster_online_nodes, var.default_node)
+    condition     = contains(local.cluster_online_nodes, var.default_node)
     error_message = "Default node should be one of alive and active nodes in cluster"
   }
 }

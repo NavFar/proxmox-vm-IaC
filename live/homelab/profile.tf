@@ -1,6 +1,6 @@
 locals {
-default_node = "tyrant"
-size_profiles = {
+  default_node = "tyrant"
+  size_profiles = {
     tiny = {
       cpu_cores = 1
       memory_mb = 1024
