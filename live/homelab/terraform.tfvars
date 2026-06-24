@@ -11,15 +11,6 @@ vms = {
       node   = "tyrant"
       ha = {
         enabled = true
-        node_affinity = {
-          enabled = true
-          strict  = false
-
-          nodes = {
-            tyrant = 100
-            havoc  = 50
-          }
-        }
       }
     }
 
@@ -53,15 +44,6 @@ vms = {
       node   = "havoc"
       ha = {
         enabled = true
-        node_affinity = {
-          enabled = true
-          strict  = false
-
-          nodes = {
-            tyrant = 50
-            havoc  = 100
-          }
-        }
       }
 
     }
@@ -92,7 +74,7 @@ user_info = {
 ha_resource_rules = {
 
   separate_test_pair = {
-    enabled = false
+    enabled = true
     type    = "resource-anti-affinity"
     strict  = false
 
