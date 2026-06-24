@@ -63,6 +63,10 @@ locals {
     for name, rule in var.ha_resource_rules : name => rule
     if try(rule.enabled, true)
   }
+  vms_in_ha_resource_rules = toset(distinct(flatten([
+  for rule_name, rule in local.enabled_ha_resource_rules :
+  rule.resources
+])))
 }
 
 

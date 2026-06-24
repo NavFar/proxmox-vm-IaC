@@ -161,5 +161,13 @@ resource "proxmox_harule" "resource_affinity" {
 
       error_message = "HA resource rule ${each.key} references a VM that is not HA-enabled. Enable placement.ha.enabled for every VM in the rule."
     }
+    precondition {
+  condition = alltrue([
+    for vm_name in each.value.resources :
+    length(local.normalized_vms[vm_name].ha.node_affinity.nodes) <= 1
+  ])
+
+  error_message = "HA resource-affinity rules cannot be combined with multi-node priority node-affinity. Use at most one node in placement.ha.node_affinity.nodes for every VM in this resource rule."
+}
   }
 }
