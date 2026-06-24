@@ -3,12 +3,22 @@ output "vms" {
 
   value = {
     for name, vm in proxmox_virtual_environment_vm.this : name => {
-      vm_id        = vm.vm_id
-      name         = vm.name
-      node_name    = vm.node_name
+      vm_id     = vm.vm_id
+      name      = vm.name
+      node_name = vm.node_name
 
-      ipv4_addresses = try(flatten(vm.ipv4_addresses), [])
-      ipv6_addresses = try(flatten(vm.ipv6_addresses), [])
+      desired_ipv4 = local.normalized_vms[name].ipv4.address
+      desired_gateway = try(local.normalized_vms[name].ipv4.gateway, null)
+
+      discovered_ipv4_addresses = try(flatten(vm.ipv4_addresses), [])
+
+      primary_ipv4 = (
+        length(try(flatten(vm.ipv4_addresses), [])) > 0
+        ? flatten(vm.ipv4_addresses)[0]
+        : local.normalized_vms[name].ipv4.address != "dhcp"
+          ? local.normalized_vms[name].ipv4.address
+          : null
+      )
     }
   }
 }

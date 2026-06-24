@@ -22,7 +22,7 @@ resource "proxmox_virtual_environment_vm" "this" {
 
   disk {
     datastore_id = each.value.root_datastore_id
-    interface    = "scsi0"
+    interface    = each.value.root_disk_interface
     size         = each.value.root_disk_size_gb
   }
 

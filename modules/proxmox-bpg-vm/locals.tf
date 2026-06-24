@@ -25,6 +25,7 @@ locals {
 
       root_disk_size_gb = vm.disks.root.size_gb
       root_datastore_id = var.disk_classes[vm.disks.root.class].datastore_id
+      root_disk_interface = var.disk_classes[vm.disks.root.class].interface
 
       tags = distinct(concat(
         ["managed-by-terraform", vm.environment, vm.role],
