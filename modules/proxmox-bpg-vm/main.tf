@@ -125,3 +125,41 @@ resource "proxmox_harule" "node_affinity" {
     proxmox_haresource.this
   ]
 }
+
+resource "proxmox_harule" "resource_affinity" {
+  for_each = local.enabled_ha_resource_rules
+  rule   = "tf-${each.key}"
+  type    = each.value.type
+  affinity = each.value.type =="resource-affinity"? "positive":"negative"
+  strict  = try(each.value.strict, false)
+  comment = try(each.value.comment, "Resource affinity rule ${each.key}; managed by Terraform")
+
+  resources = [
+    for vm_name in each.value.resources :
+    "vm:${proxmox_virtual_environment_vm.this[vm_name].vm_id}"
+  ]
+
+  depends_on = [
+    proxmox_haresource.this
+  ]
+
+  lifecycle {
+    precondition {
+      condition = alltrue([
+        for vm_name in each.value.resources :
+        contains(keys(proxmox_virtual_environment_vm.this), vm_name)
+      ])
+
+      error_message = "HA resource rule ${each.key} references a VM name that is not managed by this module."
+    }
+
+    precondition {
+      condition = alltrue([
+        for vm_name in each.value.resources :
+        contains(keys(proxmox_haresource.this), vm_name)
+      ])
+
+      error_message = "HA resource rule ${each.key} references a VM that is not HA-enabled. Enable placement.ha.enabled for every VM in the rule."
+    }
+  }
+}

@@ -119,6 +119,10 @@ variable "vms" {
 variable "default_node" {
   type        = string
   description = "Fallback Proxmox node when placement policy does not specify a node."
+  validation {
+    condition = contains(local.cluster_online_nodes, var.default_node)
+    error_message = "Default node should be one of alive and active nodes in cluster"
+  }
 }
 variable "size_profiles" {
   type = map(object({
@@ -174,4 +178,36 @@ variable "disk_classes" {
     }
   }
 
+}
+
+variable "ha_resource_rules" {
+  description = "HA resource affinity and anti-affinity rules between VMs managed by this module."
+
+  type = map(object({
+    enabled   = optional(bool, true)
+    type      = string
+    strict    = optional(bool, false)
+    resources = list(string)
+    comment   = optional(string, null)
+  }))
+
+  default = {}
+
+  validation {
+    condition = alltrue([
+      for name, rule in var.ha_resource_rules :
+      contains(["resource-affinity", "resource-anti-affinity"], rule.type)
+    ])
+
+    error_message = "ha_resource_rules.type must be resource-affinity or resource-anti-affinity."
+  }
+
+  validation {
+    condition = alltrue([
+      for name, rule in var.ha_resource_rules :
+      length(rule.resources) >= 2
+    ])
+
+    error_message = "ha_resource_rules.resources must contain at least two VM names."
+  }
 }

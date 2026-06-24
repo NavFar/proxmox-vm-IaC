@@ -59,6 +59,10 @@ locals {
     for name, vm in local.normalized_vms : name => vm
     if vm.ha.enabled && vm.ha.node_affinity.enabled
   }
+  enabled_ha_resource_rules = {
+    for name, rule in var.ha_resource_rules : name => rule
+    if try(rule.enabled, true)
+  }
 }
 
 
