@@ -1,5 +1,11 @@
 locals {
+  cluster_nodes = toset(data.proxmox_virtual_environment_nodes.cluster.names)
 
+  cluster_online_nodes = toset([
+    for idx, name in data.proxmox_virtual_environment_nodes.cluster.names :
+    name
+    if data.proxmox_virtual_environment_nodes.cluster.online[idx]
+  ])
 
   normalized_vms = {
     for name, vm in var.vms : name => {

@@ -60,6 +60,7 @@ resource "proxmox_virtual_environment_vm" "this" {
     ignore_changes = [
       node_name
     ]
+
     precondition {
       condition     = contains(keys(var.os_profiles), var.vms[each.key].os)
       error_message = "Unsupported OS profile."
@@ -68,6 +69,28 @@ resource "proxmox_virtual_environment_vm" "this" {
     precondition {
       condition     = contains(keys(var.disk_classes), var.vms[each.key].disks.root.class)
       error_message = "Unsupported disk class."
+    }
+    precondition {
+      condition     = contains(local.cluster_online_nodes, each.value.node_name)
+      error_message = "Invalid placement node for ${each.key}. The node must exist in the Proxmox cluster."
+    }
+
+    precondition {
+      condition = alltrue([
+        for node, priority in each.value.ha.node_affinity.nodes :
+        contains(local.cluster_online_nodes, node)
+      ])
+
+      error_message = "Invalid HA node-affinity rule for ${each.key}. All affinity nodes must exist in the Proxmox cluster."
+    }
+
+    precondition {
+      condition = (
+        !each.value.ha.node_affinity.enabled
+        || each.value.ha.enabled
+      )
+
+      error_message = "HA node-affinity for ${each.key} requires placement.ha.enabled = true."
     }
   }
 }
