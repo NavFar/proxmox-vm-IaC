@@ -7,6 +7,7 @@ resource "proxmox_virtual_environment_vm" "this" {
   tags        = each.value.tags
 
   clone {
+    node_name = each.value.template_node
     vm_id = each.value.template_id
     full  = true
   }
