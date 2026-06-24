@@ -15,6 +15,15 @@ variable "vms" {
         max_restart  = optional(number, 3)
         max_relocate = optional(number, 2)
         failback     = optional(bool, false)
+        replication = optional(object({
+          enabled  = optional(bool, true)
+          schedule = optional(string, "*/15")
+          rate     = optional(number, null)
+          }), {
+          enabled  = true
+          schedule = "*/15"
+          rate     = null
+        })
         node_affinity = optional(object({
           enabled = optional(bool, false)
           strict  = optional(bool, false)

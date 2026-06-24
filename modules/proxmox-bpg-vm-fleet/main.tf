@@ -92,6 +92,27 @@ resource "proxmox_virtual_environment_vm" "this" {
 
       error_message = "HA node-affinity for ${each.key} requires placement.ha.enabled = true."
     }
+    precondition {
+      condition = contains(local.cluster_nodes, each.value.node_name)
+
+      error_message = "Invalid placement node for ${each.key}. Node '${each.value.node_name}' does not exist in the Proxmox cluster."
+    }
+
+    precondition {
+      condition = local.vm_disk_datastore_available_on_candidate_nodes[each.key]
+
+      error_message = "Disk class '${each.value.root_disk_class}' resolves to datastore '${each.value.root_datastore_id}', but that datastore is not active/enabled for VM images on every candidate node for VM '${each.key}'."
+    }
+    precondition {
+      condition = (
+        try(local.vm_root_datastore_shared[each.key], false)
+        || !each.value.ha.replication.enabled
+        || each.value.ha.node_affinity.enabled
+      )
+
+      error_message = "VM '${each.key}' uses non-shared storage and has HA replication enabled, but no HA node-affinity rule. Replication target nodes must come from placement.ha.node_affinity.nodes."
+    }
+
   }
 }
 
@@ -170,4 +191,22 @@ resource "proxmox_harule" "resource_affinity" {
       error_message = "HA resource-affinity rules cannot be combined with multi-node priority node-affinity. Use at most one node in placement.ha.node_affinity.nodes for every VM in this resource rule."
     }
   }
+}
+
+resource "proxmox_replication" "this" {
+  for_each = local.vm_replication_jobs
+  id       = "${proxmox_virtual_environment_vm.this[each.value.vm_name].vm_id}-${each.value.jobnum}"
+  target   = each.value.target_node
+  type     = "local"
+
+  schedule = local.normalized_vms[each.value.vm_name].ha.replication.schedule
+  rate     = local.normalized_vms[each.value.vm_name].ha.replication.rate
+
+  comment = "Replication for ${each.value.vm_name} to ${each.value.target_node}; managed by Terraform"
+
+  depends_on = [
+    proxmox_virtual_environment_vm.this,
+    proxmox_haresource.this,
+    proxmox_harule.node_affinity,
+  ]
 }
