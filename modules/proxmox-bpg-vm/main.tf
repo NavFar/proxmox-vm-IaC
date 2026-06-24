@@ -40,7 +40,7 @@ resource "proxmox_virtual_environment_vm" "this" {
   initialization {
     datastore_id = each.value.root_datastore_id
     interface    = "ide2"
-    upgrade = false
+    upgrade      = false
     user_account {
       username = each.value.username
       keys     = each.value.public_keys
@@ -49,7 +49,7 @@ resource "proxmox_virtual_environment_vm" "this" {
     ip_config {
       ipv4 {
         address = each.value.ipv4.address == "dhcp" ? "dhcp" : each.value.ipv4.address
-        gateway = each.value.ipv4.address == "dhcp" ? "" : try(each.value.ipv4.gateway,"")
+        gateway = each.value.ipv4.address == "dhcp" ? "" : try(each.value.ipv4.gateway, "")
 
       }
     }

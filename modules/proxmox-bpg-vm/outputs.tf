@@ -7,7 +7,7 @@ output "vms" {
       name      = vm.name
       node_name = vm.node_name
 
-      desired_ipv4 = local.normalized_vms[name].ipv4.address
+      desired_ipv4    = local.normalized_vms[name].ipv4.address
       desired_gateway = try(local.normalized_vms[name].ipv4.gateway, null)
 
       discovered_ipv4_addresses = try(flatten(vm.ipv4_addresses), [])
@@ -16,8 +16,8 @@ output "vms" {
         length(try(flatten(vm.ipv4_addresses), [])) > 0
         ? flatten(vm.ipv4_addresses)[0]
         : local.normalized_vms[name].ipv4.address != "dhcp"
-          ? local.normalized_vms[name].ipv4.address
-          : null
+        ? local.normalized_vms[name].ipv4.address
+        : null
       )
     }
   }

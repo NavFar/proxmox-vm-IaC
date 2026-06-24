@@ -23,8 +23,8 @@ locals {
       vlan   = try(vm.network.primary.vlan, null)
       ipv4   = vm.network.primary.ipv4
 
-      root_disk_size_gb = vm.disks.root.size_gb
-      root_datastore_id = var.disk_classes[vm.disks.root.class].datastore_id
+      root_disk_size_gb   = vm.disks.root.size_gb
+      root_datastore_id   = var.disk_classes[vm.disks.root.class].datastore_id
       root_disk_interface = var.disk_classes[vm.disks.root.class].interface
 
       tags = distinct(concat(

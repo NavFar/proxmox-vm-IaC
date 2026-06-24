@@ -15,7 +15,7 @@ variable "vms" {
       primary = object({
         bridge = string
         vlan   = optional(number)
-        ipv4   = object({
+        ipv4 = object({
           address = string
           gateway = string
 
