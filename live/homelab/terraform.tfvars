@@ -29,6 +29,35 @@ vms = {
 
     tags = ["infra"]
   }
+test-02 = {
+    role        = "test"
+    environment = "lab"
+    size        = "medium"
+    os          = "debian-13"
+
+    placement = {
+      policy = "preferred_node"
+      node   = "havoc"
+    }
+
+    network = {
+      primary = {
+        bridge = "vmbr0"
+        ipv4 = {
+          address = "dhcp"
+        }
+      }
+    }
+
+    disks = {
+      root = {
+        size_gb = 40
+        class   = "fast"
+      }
+    }
+
+    tags = ["infra"]
+  }
 }
 user_info = {
   username    = "navidfarahmand"
