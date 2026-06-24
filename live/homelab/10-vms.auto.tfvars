@@ -10,6 +10,11 @@ vms = {
       node   = "tyrant"
       ha = {
         enabled = true
+        replication = {
+          enabled  = true
+          schedule = "*/5"
+          rate     = null
+        }
       }
     }
 

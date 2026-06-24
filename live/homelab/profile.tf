@@ -40,5 +40,9 @@ locals {
       datastore_id = "homelab-iscsi-lvm"
       interface    = "scsi0"
     }
+    local_lvm = {
+      datastore_id = "local-lvm"
+      interface    = "scsi0"
+    }
   }
 }
