@@ -37,4 +37,21 @@ output "vms" {
     }
   }
 }
+output "ha_resource_rules" {
+  description = "HA resource affinity and anti-affinity rules managed by this module."
 
+  value = {
+    for name, rule in proxmox_harule.resource_affinity : name => {
+      id        = rule.id
+      rule      = rule.rule
+      type      = rule.type
+      affinity  = try(rule.affinity, null)
+      strict    = rule.strict
+      disable   = try(rule.disable, null)
+      comment   = try(rule.comment, null)
+      resources = rule.resources
+
+      input_resources = try(var.ha_resource_rules[name].resources, [])
+    }
+  }
+}
