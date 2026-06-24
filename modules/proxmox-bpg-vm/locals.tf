@@ -15,10 +15,10 @@ locals {
       cpu_cores = var.size_profiles[vm.size].cpu_cores
       memory_mb = var.size_profiles[vm.size].memory_mb
 
-      template_id = var.os_profiles[vm.os].template_id
+      template_id   = var.os_profiles[vm.os].template_id
       template_node = var.os_profiles[vm.os].template_node
-      username    = var.os_profiles[vm.os].username
-      public_keys = var.os_profiles[vm.os].public_keys
+      username      = var.os_profiles[vm.os].username
+      public_keys   = var.os_profiles[vm.os].public_keys
 
       bridge = vm.network.primary.bridge
       vlan   = try(vm.network.primary.vlan, null)

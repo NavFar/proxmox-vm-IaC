@@ -29,7 +29,7 @@ vms = {
 
     tags = ["infra"]
   }
-test-02 = {
+  test-02 = {
     role        = "test"
     environment = "lab"
     size        = "medium"

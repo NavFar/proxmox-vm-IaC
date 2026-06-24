@@ -25,16 +25,16 @@ module "vms" {
   }
   os_profiles = {
     debian-13 = {
-      template_id = 9000
-      template_node= "tyrant"
-      username    = var.user_info.username
-      public_keys = var.user_info.public_keys
+      template_id   = 9000
+      template_node = "tyrant"
+      username      = var.user_info.username
+      public_keys   = var.user_info.public_keys
     }
     ubuntu-2404 = {
-      template_id = 9001
-      template_node= "tyrant"
-      username    = var.user_info.username
-      public_keys = var.user_info.public_keys
+      template_id   = 9001
+      template_node = "tyrant"
+      username      = var.user_info.username
+      public_keys   = var.user_info.public_keys
     }
   }
   disk_classes = {

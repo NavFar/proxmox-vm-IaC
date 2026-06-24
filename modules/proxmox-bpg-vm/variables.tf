@@ -90,10 +90,10 @@ variable "size_profiles" {
 variable "os_profiles" {
   description = "template ID and user information to create VM from"
   type = map(object({
-    template_id = number
+    template_id   = number
     template_node = string
-    username    = string
-    public_keys = list(string)
+    username      = string
+    public_keys   = list(string)
   }))
 }
 
