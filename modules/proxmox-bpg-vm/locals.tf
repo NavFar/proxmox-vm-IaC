@@ -11,7 +11,18 @@ locals {
         ? vm.placement.node
         : var.default_node
       )
-
+      ha = {
+        enabled      = try(vm.placement.ha.enabled, false)
+        state        = try(vm.placement.ha.state, "started")
+        max_restart  = try(vm.placement.ha.max_restart, 3)
+        max_relocate = try(vm.placement.ha.max_relocate, 2)
+        failback     = try(vm.placement.ha.failback, null)
+        node_affinity = {
+          enabled = try(vm.placement.ha.node_affinity.enabled, false)
+          strict  = try(vm.placement.ha.node_affinity.strict, false)
+          nodes   = try(vm.placement.ha.node_affinity.nodes, {})
+        }
+      }
       cpu_cores = var.size_profiles[vm.size].cpu_cores
       memory_mb = var.size_profiles[vm.size].memory_mb
 
@@ -33,6 +44,14 @@ locals {
         try(vm.tags, [])
       ))
     }
+  }
+  ha_vms = {
+    for name, vm in local.normalized_vms : name => vm
+    if vm.ha.enabled
+  }
+  ha_node_affinity_rules = {
+    for name, vm in local.normalized_vms : name => vm
+    if vm.ha.enabled && vm.ha.node_affinity.enabled
   }
 }
 

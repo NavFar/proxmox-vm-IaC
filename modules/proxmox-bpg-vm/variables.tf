@@ -9,6 +9,36 @@ variable "vms" {
     placement = object({
       policy = string
       node   = optional(string)
+      ha = optional(object({
+        enabled      = optional(bool, false)
+        state        = optional(string, "started")
+        max_restart  = optional(number, 3)
+        max_relocate = optional(number, 2)
+        failback     = optional(bool, false)
+        node_affinity = optional(object({
+          enabled = optional(bool, false)
+          strict  = optional(bool, false)
+          nodes   = map(number)
+          }), {
+          enabled = false
+          strict  = false
+          nodes   = {}
+        })
+
+        }),
+        {
+          enabled      = false
+          state        = "started"
+          max_restart  = 3
+          max_relocate = 2
+          failback     = false
+          node_affinity = {
+            enabled = false
+            strict  = false
+            nodes   = {}
+          }
+        }
+      )
     })
 
     network = object({
@@ -56,6 +86,34 @@ variable "vms" {
       vm.placement.policy != "preferred_node" || try(vm.placement.node, null) != null
     ])
     error_message = "placement.node is required when placement.policy is preferred_node."
+  }
+  validation {
+    condition = alltrue([
+      for name, vm in var.vms :
+      contains(["started", "stopped", "disabled", "ignored"], try(vm.placement.ha.state, "started"))
+    ])
+
+    error_message = "placement.ha.state must be one of: started, stopped, disabled, ignored."
+  }
+  validation {
+    condition = alltrue([
+      for name, vm in var.vms :
+      !try(vm.placement.ha.node_affinity.enabled, false)
+      || length(try(vm.placement.ha.node_affinity.nodes, {})) > 0
+    ])
+
+    error_message = "placement.ha.node_affinity.nodes must contain at least one node when node_affinity.enabled is true."
+  }
+
+  validation {
+    condition = alltrue(flatten([
+      for name, vm in var.vms : [
+        for node, priority in try(vm.placement.ha.node_affinity.nodes, {}) :
+        priority >= 0
+      ]
+    ]))
+
+    error_message = "placement.ha.node_affinity.nodes priorities must be >= 0."
   }
 }
 variable "default_node" {

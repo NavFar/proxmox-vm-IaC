@@ -19,6 +19,21 @@ output "vms" {
         ? local.normalized_vms[name].ipv4.address
         : null
       )
+      ha_enabled = local.normalized_vms[name].ha.enabled
+      ha_state = (
+        local.normalized_vms[name].ha.enabled
+        ? proxmox_haresource.this[name].state
+        : null
+      )
+
+      ha_node_affinity = (
+        local.normalized_vms[name].ha.node_affinity.enabled
+        ? {
+          strict = local.normalized_vms[name].ha.node_affinity.strict
+          nodes  = local.normalized_vms[name].ha.node_affinity.nodes
+        }
+        : null
+      )
     }
   }
 }

@@ -57,6 +57,9 @@ resource "proxmox_virtual_environment_vm" "this" {
   }
 
   lifecycle {
+    ignore_changes = [
+      node_name
+    ]
     precondition {
       condition     = contains(keys(var.os_profiles), var.vms[each.key].os)
       error_message = "Unsupported OS profile."
@@ -67,4 +70,35 @@ resource "proxmox_virtual_environment_vm" "this" {
       error_message = "Unsupported disk class."
     }
   }
+}
+
+resource "proxmox_haresource" "this" {
+  for_each = local.ha_vms
+
+  resource_id  = "vm:${proxmox_virtual_environment_vm.this[each.key].vm_id}"
+  state        = each.value.ha.state
+  max_restart  = each.value.ha.max_restart
+  max_relocate = each.value.ha.max_relocate
+  failback     = each.value.ha.failback
+  comment      = "Managed by Terraform"
+}
+
+resource "proxmox_harule" "node_affinity" {
+  for_each = local.ha_node_affinity_rules
+
+
+  rule    = "tf-${each.key}-node-affinity"
+  type    = "node-affinity"
+  comment = "Node affinity rule for ${each.key}; managed by Terraform"
+
+  resources = [
+    "vm:${proxmox_virtual_environment_vm.this[each.key].vm_id}"
+  ]
+
+  nodes  = each.value.ha.node_affinity.nodes
+  strict = each.value.ha.node_affinity.strict
+
+  depends_on = [
+    proxmox_haresource.this
+  ]
 }
