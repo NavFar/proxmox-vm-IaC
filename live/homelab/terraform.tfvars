@@ -1,3 +1,4 @@
+default_node = "tyrant"
 vms = {
   test-01 = {
     role        = "test"
@@ -8,6 +9,18 @@ vms = {
     placement = {
       policy = "preferred_node"
       node   = "tyrant"
+      ha = {
+        enabled = true
+        node_affinity = {
+          enabled = true
+          strict  = false
+
+          nodes = {
+            tyrant = 100
+            havoc  = 50
+          }
+        }
+      }
     }
 
     network = {
@@ -45,8 +58,8 @@ vms = {
           strict  = false
 
           nodes = {
-            tyrant = 100
-            havoc  = 50
+            tyrant = 50
+            havoc  = 100
           }
         }
       }
@@ -75,4 +88,19 @@ vms = {
 user_info = {
   username    = "navidfarahmand"
   public_keys = ["ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDf462QRz8CNGV2a/5l79EUmEYObxEAeaI8dm0I+Eo9GsYqv3edUVXkAGapJ0HrvZv3k6pxLDeRcpJN9FsQBm1I9N/VqkziGva7edvTDRtQU6Vr4nbEY0DL4lDuf1vB48C/aQ1zBekv5vkM3SjuRIk4JxbTOEmk36Q+ShgEYnWkrW0AZAWQVIL4rf8khQZLeoD2drOCBypER2bRWAPfhg0dEGxy+EsPeYybQQo1yNmvN82ony/eMCtSSRFaGRkJVNakMl8TQ9WWbayCkiGh/9GMh4liR/5+SA9prh6f3OpcQ2xflXlKf6xcZSaarbQ+Xag67CZNlGV4oAv8BrBZniq3Eo/EbzV4L9AO0xYSzdl8MQ2Mj6DA7hA9jyBAA3wRviJWrAfT5fVfXkgDZRTdyYjz4r++zKXYO5poD9IZ91f1VnRlAtpPKvPosQWTBn2Wyawd+5Wy/UlMIHPvU1H5TMSFnJF3oN8MmK+i8OZSpx5heNgSMbPZCWojqQ/r2vu8jW0= navidfarahmand@arch-legion"]
+}
+ha_resource_rules = {
+
+  separate_test_pair = {
+    enabled = false
+    type    = "resource-anti-affinity"
+    strict  = false
+
+    resources = [
+      "test-01",
+      "test-02",
+    ]
+
+    comment = "Prefer test-01 and test-02 to run separately"
+  }
 }

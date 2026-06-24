@@ -1,3 +1,7 @@
+variable "default_node" {
+  description = "defacto node to put new VMs on"
+  type = string
+}
 variable "vms" {
   type = any
 }
@@ -16,4 +20,9 @@ variable "proxmox_info" {
     insecure  = bool
     api_token = string
   })
+}
+variable "ha_resource_rules" {
+  description = "HA resource affinity and anti-affinity rules between VMs."
+  type        = any
+  default     = {}
 }
