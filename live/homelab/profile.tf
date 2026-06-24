@@ -1,4 +1,5 @@
 locals {
+default_node = "tyrant"
 size_profiles = {
     tiny = {
       cpu_cores = 1
@@ -24,14 +25,14 @@ size_profiles = {
     debian-13 = {
       template_id   = 9000
       template_node = "tyrant"
-      username      = var.user_info.username
-      public_keys   = var.user_info.public_keys
+      username      = var.users_info[0].username
+      public_keys   = var.users_info[0].public_keys
     }
     ubuntu-2404 = {
       template_id   = 9001
       template_node = "tyrant"
-      username      = var.user_info.username
-      public_keys   = var.user_info.public_keys
+      username      = var.users_info[0].username
+      public_keys   = var.users_info[0].public_keys
     }
   }
   disk_classes = {

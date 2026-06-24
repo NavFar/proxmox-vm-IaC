@@ -1,16 +1,12 @@
-variable "default_node" {
-  description = "defacto node to put new VMs on"
-  type = string
-}
 variable "vms" {
   type = any
 }
-variable "user_info" {
-  description = "provisioner user info for VMs"
-  type = object({
+variable "users_info" {
+  description = "provisioner users info for VMs"
+  type = list(object({
     username    = string
     public_keys = list(string)
-  })
+  }))
 }
 variable "proxmox_info" {
   description = "Proxmox connection info"
