@@ -129,7 +129,7 @@ resource "proxmox_harule" "node_affinity" {
 resource "proxmox_harule" "resource_affinity" {
   for_each = local.enabled_ha_resource_rules
   rule   = "tf-${each.key}"
-  type    = each.value.type=="node_affinity"?"node_affinity":"resource-affinity"
+  type    = each.value.type=="resource-affinity"
   affinity = each.value.type =="resource-affinity"? "positive":"negative"
   strict  = try(each.value.strict, false)
   comment = try(each.value.comment, "Resource affinity rule ${each.key}; managed by Terraform")
