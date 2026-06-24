@@ -38,6 +38,19 @@ vms = {
     placement = {
       policy = "preferred_node"
       node   = "havoc"
+      ha = {
+        enabled = true
+        node_affinity = {
+          enabled = true
+          strict  = false
+
+          nodes = {
+            tyrant = 100
+            havoc  = 50
+          }
+        }
+      }
+
     }
 
     network = {
