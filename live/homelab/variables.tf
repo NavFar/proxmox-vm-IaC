@@ -10,6 +10,7 @@ variable "user_info" {
 }
 variable "proxmox_info" {
   description = "Proxmox connection info"
+  sensitive = true
   type = object({
     endpoint  = string
     insecure  = bool
